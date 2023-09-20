@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node build/app.js",
-    "dev": "nodemon ./src/app.ts",
+    "start": "node build/server.js",
+    "dev": "nodemon ./server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
