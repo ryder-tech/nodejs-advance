@@ -1,20 +1,26 @@
 import { Request, Response } from "express";
+const morgan = require("morgan");
+const helmet = require("helmet");
+const compression = require("compression");
 
 const express = require("express");
 
 const port = 3000;
-const expressApp = express();
+const app = express();
 
 // middlewares
+app.use(morgan("dev")); // dev, common, combined, short, tiny
+app.use(helmet());
+app.use(compression());
 
 // configs: connnect databases, connect RabbitMQ, connect to websockets
 
 // routes
-expressApp.get("/", (req: Request, res: Response) => {
-  const name = req.query?.name;
-  res.send(`Welcome to ${name}`);
+app.get("/products", (req: Request, res: Response) => {
+  const greeting = "Hello world".repeat(100000);
+  res.send(greeting);
 });
 
 // handle errors
 
-module.exports = expressApp;
+module.exports = app;
