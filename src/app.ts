@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import MongoDBConfig from './configs/mongodb.config'
+import router from './routes'
+import exp from 'constants'
 const morgan = require('morgan')
 const helmet = require('helmet')
 const compression = require('compression')
@@ -13,19 +15,14 @@ const app = express()
 app.use(morgan('dev')) // dev, common, combined, short, tiny
 app.use(helmet())
 app.use(compression())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // configs: connnect databases, connect RabbitMQ, connect to websockets
 MongoDBConfig.connect()
-MongoDBConfig.connect()
-MongoDBConfig.connect()
-MongoDBConfig.connect()
-MongoDBConfig.connect()
 
 // routes
-app.get('/products', (req: Request, res: Response) => {
-  const greeting = 'Hello world'.repeat(100000)
-  res.send(greeting)
-})
+app.use('/', router)
 
 // handle errors
 
