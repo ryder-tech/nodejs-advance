@@ -23,6 +23,16 @@ class SuccessReponse {
   }
 }
 
+class OK extends SuccessReponse {
+  constructor({
+    statusCode = StatusCodes.OK,
+    message = ReasonPhrases.OK,
+    metadata,
+  }: ISuccessReponse) {
+    super({ statusCode, message, metadata })
+  }
+}
+
 class CREATED extends SuccessReponse {
   constructor({
     statusCode = StatusCodes.CREATED,
@@ -33,4 +43,4 @@ class CREATED extends SuccessReponse {
   }
 }
 
-export { CREATED, SuccessReponse }
+export { SuccessReponse, CREATED, OK }
