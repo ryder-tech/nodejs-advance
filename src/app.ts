@@ -1,7 +1,6 @@
-import { Request, Response } from 'express'
 import MongoDBConfig from './configs/mongodb.config'
+import { handleError } from './helpers/handle.error'
 import router from './routes'
-import exp from 'constants'
 const morgan = require('morgan')
 const helmet = require('helmet')
 const compression = require('compression')
@@ -25,5 +24,6 @@ MongoDBConfig.connect()
 app.use('/', router)
 
 // handle errors
+app.use(handleError)
 
 module.exports = app
