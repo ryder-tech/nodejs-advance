@@ -17,10 +17,10 @@ class ErrorReponse {
 }
 
 class BadRequest extends ErrorReponse {
-  constructor({
-    statusCode = StatusCodes.BAD_REQUEST,
-    message = ReasonPhrases.BAD_GATEWAY,
-  }: IErrorReponse) {
+  constructor(
+    message: string = ReasonPhrases.BAD_GATEWAY,
+    statusCode: number = StatusCodes.BAD_REQUEST,
+  ) {
     super({ statusCode, message })
   }
 }

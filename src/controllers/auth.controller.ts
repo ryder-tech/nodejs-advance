@@ -13,17 +13,13 @@ class AuthController {
     const { email, name, display_name, password } = req.body
 
     if (!email || !name || !display_name || !password) {
-      throw new BadRequest({
-        message: 'Email, name, displayName and password are required',
-      })
+      throw new BadRequest('Email, name, displayName and password are required')
     }
 
     // check existed email or name
     const existed = await shopModel.findOne({ $or: [{ email }, { name }] })
     if (existed) {
-      throw new BadRequest({
-        message: 'Email or name are existed',
-      })
+      throw new BadRequest('Email or name are existed')
     }
 
     try {
@@ -39,9 +35,7 @@ class AuthController {
         metadata: newShop,
       }).send(res)
     } catch (error: any) {
-      throw new BadRequest({
-        message: error?.message,
-      })
+      throw new BadRequest(error?.message)
     }
   }
 
@@ -50,21 +44,17 @@ class AuthController {
     const { id } = req.headers
 
     if (!email || !password) {
-      throw new BadRequest({
-        message: 'Email and password are required',
-      })
+      throw new BadRequest('Email and password are required')
     }
 
     const shop = await shopModel.findById(id).lean()
     if (!shop) {
-      throw new BadRequest({
-        message: 'Shop not found!',
-      })
+      throw new BadRequest('Shop not found!')
     }
 
     return new OK({
       message: 'Login success',
-      metadata: await authService.signIn(shop),
+      metadata: await authService.generateJWT(shop),
     }).send(res)
   }
 
@@ -72,16 +62,12 @@ class AuthController {
     const { authorization: token, id } = req.headers
 
     if (!token) {
-      throw new BadRequest({
-        message: 'Token is required',
-      })
+      throw new BadRequest('Token is required')
     }
 
     const shop = await shopModel.findById(id).lean()
     if (!shop) {
-      throw new BadRequest({
-        message: 'Shop not found!',
-      })
+      throw new BadRequest('Shop not found!')
     }
 
     const tokenObj = await tokenModel
@@ -93,6 +79,33 @@ class AuthController {
     return new OK({
       message: 'Check verify',
       metadata: {},
+    }).send(res)
+  }
+
+  /**
+   * refresh_token: request body
+   * validate refresh_token -> ok -> return new {access_token, refresh_token}
+   * @param req
+   * @param res
+   * @param next
+   */
+  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    const { refresh_token: refreshToken } = req.body
+    const { id } = req.headers
+
+    // validate
+    if (!refreshToken || !id) {
+      throw new BadRequest('Refresh token and shop infor are required')
+    }
+
+    const shop = await shopModel.findById(id).lean()
+    if (!shop) {
+      throw new BadRequest('Shop is not exist')
+    }
+
+    return new OK({
+      message: 'Get new JWT',
+      metadata: await authService.refreshToken(shop, refreshToken),
     }).send(res)
   }
 }

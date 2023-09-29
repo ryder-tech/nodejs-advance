@@ -2,9 +2,12 @@ import { IShopModel } from '../models/shop.model'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import tokenModel from '../models/token.model'
+import { Types } from 'mongoose'
+import { BadRequest } from '../helpers/handle.error'
+import { error } from 'console'
 
 class AuthService {
-  signIn = async (shop: IShopModel) => {
+  generateJWT = async (shop: IShopModel) => {
     // create RSA
     const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
       modulusLength: 4096,
@@ -44,6 +47,34 @@ class AuthService {
       accessToken,
       refreshToken,
     }
+  }
+
+  /**
+   * get a new access_token and refresh_token
+   * @param shop
+   * @param refreshToken
+   * @returns
+   */
+  refreshToken = async (shop: IShopModel, refreshToken: string) => {
+    // public_key
+    const tokenObj = await tokenModel
+      .findOne({ shop: new Types.ObjectId(shop._id) })
+      .sort({ _id: -1 })
+      .lean() // DESC
+
+    if (!tokenObj) {
+      throw new BadRequest('Refresh token is not existed')
+    }
+
+    // verify public_key refresh_token
+    jwt.verify(refreshToken, tokenObj?.public_key, (error: any, _: any) => {
+      if (error) {
+        throw new BadRequest('Refresh token is invalid')
+      }
+    })
+
+    // generate a new JWT
+    return this.generateJWT(shop)
   }
 }
 

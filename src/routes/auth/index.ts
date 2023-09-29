@@ -6,5 +6,6 @@ const router = express.Router()
 router.post('/sign-up', handleAsynError(authController.signUp))
 router.post('/sign-in', handleAsynError(authController.signIn))
 router.get('/products', handleAsynError(authController.listProducts))
+router.post('/refresh-token', handleAsynError(authController.refreshToken))
 
 module.exports = router
