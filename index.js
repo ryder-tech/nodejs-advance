@@ -1,3 +1,3 @@
 /**
- login API with RSA encryption algorithm and JWT
+ Log out API
  */

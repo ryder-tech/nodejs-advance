@@ -5,6 +5,7 @@ import tokenModel from '../models/token.model'
 import { Types } from 'mongoose'
 import { BadRequest } from '../helpers/handle.error'
 import { error } from 'console'
+import { RequestAuth } from '../middlewares/auth.middleware'
 
 class AuthService {
   generateJWT = async (shop: IShopModel) => {
@@ -75,6 +76,11 @@ class AuthService {
 
     // generate a new JWT
     return this.generateJWT(shop)
+  }
+
+  logout = async (req: RequestAuth) => {
+    const tokenId = req.token?._id
+    return tokenModel.deleteOne({ _id: tokenId })
   }
 }
 

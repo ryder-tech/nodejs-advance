@@ -7,6 +7,7 @@ import authService from '../services/auth.service'
 import tokenModel from '../models/token.model'
 import { Types } from 'mongoose'
 import jwt from 'jsonwebtoken'
+import { RequestAuth } from '../middlewares/auth.middleware'
 
 class AuthController {
   signUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -106,6 +107,13 @@ class AuthController {
     return new OK({
       message: 'Get new JWT',
       metadata: await authService.refreshToken(shop, refreshToken),
+    }).send(res)
+  }
+
+  logOut = async (req: RequestAuth, res: Response, next: NextFunction) => {
+    return new OK({
+      message: 'Get new JWT',
+      metadata: await authService.logout(req),
     }).send(res)
   }
 }

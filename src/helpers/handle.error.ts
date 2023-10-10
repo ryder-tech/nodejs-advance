@@ -25,6 +25,15 @@ class BadRequest extends ErrorReponse {
   }
 }
 
+class AuthError extends ErrorReponse {
+  constructor(
+    message: string = ReasonPhrases.UNAUTHORIZED,
+    statusCode: number = StatusCodes.UNAUTHORIZED,
+  ) {
+    super({ statusCode, message })
+  }
+}
+
 const handleError = (
   error: ErrorReponse,
   req: Request,
@@ -41,4 +50,4 @@ const handleError = (
     .send()
 }
 
-export { ErrorReponse, BadRequest, handleError }
+export { ErrorReponse, BadRequest, AuthError, handleError }
